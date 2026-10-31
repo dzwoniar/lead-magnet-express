@@ -1,0 +1,133 @@
+/* base.css — wspoldzielone prymitywy (zrekonstruowane 1:1 z reference-structures/base-styles.md).
+   Warstwa NAD tokens.css. Sekcje REFERUJA te klasy/zmienne, nie inline'uja.
+   Kolory tylko przez var(--...). accent/radius/btn-height = semantyczne aliasy. */
+
+:root {
+  --accent: var(--brand);            /* token = kolor PRIMARY CTA (moze byc brand lub brand-2) */
+  --accent-contrast: var(--white);   /* czytelny tekst na akcencie */
+  --radius-sm: 8px;                  /* inputy / male chipy */
+  --radius-md: 16px;                 /* karty / kafle */
+  --radius-lg: 24px;                 /* duze kontenery / hero-karty */
+  --radius-pill: 999px;              /* przyciski / icon-button */
+  --btn-height: 52px;                /* JEDNA wysokosc przycisku na calej stronie */
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+
+/* ---------- Buttons ---------- */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  box-sizing: border-box; min-height: var(--btn-height, 52px);
+  padding-block: 0; padding-inline: 28px;
+  border: 1px solid transparent;
+  border-radius: var(--radius-pill, var(--border-radius, 8px));
+  font: inherit; font-weight: 700; line-height: 1;
+  white-space: nowrap; text-decoration: none; cursor: pointer;
+  transition: background-color 200ms ease, color 200ms ease, border-color 200ms ease,
+              transform 200ms ease, box-shadow 200ms ease;
+}
+.btn:focus-visible { outline: 2px solid var(--brand); outline-offset: 2px; }
+.btn:disabled, .btn[aria-disabled="true"] { opacity: .5; cursor: not-allowed; pointer-events: none; }
+
+.btn-primary { background-color: var(--accent, var(--brand)); color: var(--accent-contrast, var(--white)); }
+@media (hover: hover) {
+  .btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px -6px color-mix(in srgb, var(--brand) 55%, transparent);
+    filter: brightness(.95);
+  }
+}
+.btn-primary:active { transform: translateY(0); box-shadow: none; }
+
+.btn-secondary { background-color: transparent; color: var(--brand); border-color: var(--brand); }
+@media (hover: hover) {
+  .btn-secondary:hover { background-color: var(--brand); color: var(--white); transform: translateY(-2px); }
+}
+.btn-secondary:active { transform: translateY(0); }
+
+.btn-ghost { background-color: transparent; color: var(--black1, currentColor); padding-inline: 8px; }
+.btn-ghost:hover { background-color: color-mix(in srgb, var(--brand) 10%, transparent); }
+
+.btn-icon {
+  width: 48px; height: 48px; padding: 0; border-radius: var(--radius-pill, 999px);
+  display: inline-flex; align-items: center; justify-content: center;
+  background-color: var(--accent, var(--brand)); color: var(--accent-contrast, var(--white));
+  border: none; cursor: pointer; transition: transform 200ms ease, background-color 200ms ease;
+}
+@media (hover: hover) { .btn-icon:hover { transform: scale(1.08); } }
+.btn-icon:active { transform: scale(.96); }
+.btn-icon:focus-visible { outline: 2px solid var(--brand); outline-offset: 2px; }
+
+/* ---------- Hover vocabulary ---------- */
+.hover-scale { transition: transform 200ms ease; }
+@media (hover: hover) { .hover-scale:hover { transform: scale(1.04); } }
+.hover-scale:active { transform: scale(.99); }
+
+.hover-lift { transition: transform 200ms cubic-bezier(.22,1,.36,1), box-shadow 200ms ease; }
+@media (hover: hover) { .hover-lift:hover { transform: translateY(-6px); box-shadow: 0 16px 32px -12px rgba(0,0,0,.22); } }
+.hover-lift:active { transform: translateY(-2px); }
+
+.hover-fill { transition: background-color 200ms ease, color 200ms ease; }
+@media (hover: hover) { .hover-fill:hover { background-color: var(--accent, var(--brand)); color: var(--accent-contrast, var(--white)); } }
+
+.with-arrow { display: inline-flex; align-items: center; gap: 8px; }
+.with-arrow .arrow { transition: transform 200ms ease; }
+@media (hover: hover) { .with-arrow:hover .arrow { transform: translateX(4px); } }
+
+.link-underline {
+  position: relative; text-decoration: none; color: inherit;
+  background-image: linear-gradient(var(--brand), var(--brand));
+  background-position: 0 100%; background-repeat: no-repeat; background-size: 0% 2px;
+  transition: background-size 220ms ease, color 200ms ease; padding-bottom: 2px;
+}
+@media (hover: hover) { .link-underline:hover { background-size: 100% 2px; color: var(--brand); } }
+.link-underline:focus-visible { background-size: 100% 2px; outline: none; }
+.link-underline[aria-current="page"] { background-size: 100% 2px; color: var(--brand); }
+
+/* ---------- Content icons (mask, recolorable) ---------- */
+.svc-icon {
+  display: inline-block; width: 40px; height: 40px;
+  background-color: var(--accent, var(--brand));
+  -webkit-mask: var(--icon) center / contain no-repeat;
+          mask: var(--icon) center / contain no-repeat;
+  transition: background-color 200ms ease;
+}
+
+/* ---------- Cards ---------- */
+.card {
+  position: relative; z-index: 1; background: var(--white);
+  border-radius: var(--radius-md, var(--border-radius)); overflow: hidden;
+  transition: transform 200ms cubic-bezier(.22,1,.36,1), box-shadow 200ms ease;
+}
+@media (hover: hover) {
+  .card:hover { transform: translateY(-6px); box-shadow: 0 16px 32px -12px rgba(0,0,0,.22); }
+  .card:hover img { transform: scale(1.05); }
+  .card:hover .arrow { transform: translateX(4px); }
+}
+.card img { transition: transform 400ms ease; }
+.card a:focus-visible { outline: 2px solid var(--brand); outline-offset: 2px; }
+.card-body { padding: 24px var(--padding-horizontal, 24px); }
+
+/* ---------- Inputs ---------- */
+.field {
+  width: 100%; padding: 14px 16px;
+  border: 1px solid var(--light3, #ccc);
+  border-radius: var(--radius-sm, var(--border-radius, 8px));
+  background: var(--white); font: inherit;
+  transition: border-color 200ms ease, box-shadow 200ms ease;
+}
+.field::placeholder { color: var(--light3); }
+.field:hover { border-color: var(--brand); }
+.field:focus { outline: none; border-color: var(--brand); box-shadow: 0 0 0 3px color-mix(in srgb, var(--brand) 25%, transparent); }
+.field:user-invalid { border-color: #e5484d; }
+
+/* ---------- Missing-data placeholder ---------- */
+.data-placeholder { opacity: .55; font-style: italic; font-weight: inherit; }
+
+/* ---------- Reduced motion ---------- */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: .01ms !important; animation-iteration-count: 1 !important;
+    transition-duration: .01ms !important;
+  }
+}

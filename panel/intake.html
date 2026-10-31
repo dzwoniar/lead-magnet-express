@@ -1,0 +1,545 @@
+<!doctype html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>LME — panel funnela lead magnetu</title>
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif; background: #F4F6F6; color: #0F1011; }
+  header.bar { background: #0F1011; color: #fff; padding: 12px 20px; display: flex; align-items: center; gap: 12px; }
+  header.bar h1 { font-size: 16px; margin: 0; font-weight: 700; }
+  header.bar span { font-size: 12.5px; opacity: .7; }
+  .wrap { display: grid; grid-template-columns: 420px 1fr; gap: 0; height: calc(100vh - 48px); }
+  .pane { overflow-y: auto; padding: 18px 20px 60px; background: #fff; border-right: 1px solid #E8ECEE; }
+  .prev { padding: 14px; }
+  .prev iframe { width: 100%; height: 100%; border: 1px solid #D5DCDF; border-radius: 8px; background: #fff; }
+  fieldset { border: 1px solid #E8ECEE; border-radius: 10px; margin: 0 0 16px; padding: 12px 14px 14px; }
+  legend { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: .05em; color: #45494D; padding: 0 6px; }
+  label { display: block; font-size: 12.5px; font-weight: 600; margin: 10px 0 4px; color: #292B2D; }
+  input[type=text], input[type=url], textarea { width: 100%; padding: 9px 11px; border: 1px solid #D5DCDF; border-radius: 8px; font: inherit; font-size: 13.5px; }
+  textarea { resize: vertical; min-height: 54px; }
+  .chk { display: flex; gap: 8px; align-items: center; margin-top: 10px; font-size: 13px; }
+  .hint { font-size: 11.5px; color: #45494D; margin: 3px 0 0; }
+  .actions { position: sticky; bottom: 0; background: #fff; padding: 12px 0 0; border-top: 1px solid #E8ECEE; display: flex; gap: 10px; }
+  button { flex: 1; padding: 12px; border: 0; border-radius: 999px; font: inherit; font-weight: 700; cursor: pointer; }
+  #btn-page { background: #0F1011; color: #fff; }
+  #btn-brief { background: #E8ECEE; color: #0F1011; }
+  #panel-error { color: #B3261E; font-size: 12.5px; min-height: 16px; margin-top: 8px; }
+  @media (max-width: 980px) { .wrap { grid-template-columns: 1fr; height: auto; } .prev { height: 70vh; } }
+</style>
+</head>
+<body>
+<header class="bar"><h1>Lead Magnet Express</h1><span>brief → landing z formularzem → MailerLite. Edytujesz pola, podgląd aktualizuje się sam.</span></header>
+<div class="wrap">
+  <div class="pane">
+    <fieldset>
+      <legend>Marka</legend>
+      <label for="f-brand">Nazwa marki</label>
+      <input type="text" id="f-brand" value="Twoja Marka" maxlength="60" />
+      <label for="f-logo">Logo (SVG)</label>
+      <input type="file" id="f-logo" accept=".svg,image/svg+xml" />
+      <p class="hint">Kolory marki (brand/CTA) wyprowadzą się z logo automatycznie.</p>
+    </fieldset>
+
+    <fieldset>
+      <legend>Treść landingu</legend>
+      <label for="f-kicker">Kicker (chip nad tytułem)</label>
+      <input type="text" id="f-kicker" value="Darmowy materiał" maxlength="40" />
+      <label for="f-h1">Nagłówek H1</label>
+      <textarea id="f-h1" maxlength="90">Odbierz checklistę, która oszczędza godziny pracy co tydzień</textarea>
+      <label for="f-sub">Podtytuł (opcjonalny)</label>
+      <textarea id="f-sub" maxlength="160">Konkretna, sprawdzona w praktyce lista kroków — bez teorii i lania wody.</textarea>
+      <label>3 bullety wartości</label>
+      <input type="text" id="f-b1" value="Gotowe kroki do wdrożenia od razu" maxlength="80" />
+      <input type="text" id="f-b2" value="Sprawdzone na realnych projektach" maxlength="80" style="margin-top:6px" />
+      <input type="text" id="f-b3" value="Zero teorii — samo mięso" maxlength="80" style="margin-top:6px" />
+    </fieldset>
+
+    <fieldset>
+      <legend>Formularz</legend>
+      <label for="f-ftitle">Tytuł karty</label>
+      <input type="text" id="f-ftitle" value="Odbierz za darmo" maxlength="50" />
+      <label for="f-fsub">Tekst pod tytułem</label>
+      <input type="text" id="f-fsub" value="Wpisz dane, a materiał wyląduje u Ciebie od razu." maxlength="100" />
+      <label for="f-fsubmit">Tekst przycisku</label>
+      <input type="text" id="f-fsubmit" value="Wysyłam" maxlength="30" />
+      <label for="f-rodo">Tekst zgody RODO</label>
+      <textarea id="f-rodo" maxlength="300">Wyrażam zgodę na przetwarzanie moich danych w celu otrzymania materiału i informacji od nadawcy.</textarea>
+      <label for="f-privacy">Link do polityki prywatności (URL)</label>
+      <input type="url" id="f-privacy" value="" placeholder="https://..." />
+    </fieldset>
+
+    <fieldset>
+      <legend>Po zapisie (strona podziękowania)</legend>
+      <label for="f-ttitle">Tytuł</label>
+      <input type="text" id="f-ttitle" value="Gotowe!" maxlength="50" />
+      <label for="f-tbody">Treść</label>
+      <textarea id="f-tbody" maxlength="300">Materiał jest gotowy do pobrania poniżej.</textarea>
+      <label for="f-tbtn">Tekst przycisku pobierania</label>
+      <input type="text" id="f-tbtn" value="Pobierz PDF" maxlength="40" />
+      <label for="f-file">Nazwa pliku lead magnetu (leży obok index.html)</label>
+      <input type="text" id="f-file" value="lead-magnet.pdf" maxlength="80" />
+      <div class="chk"><input type="checkbox" id="f-doi" /><label for="f-doi" style="margin:0">Konto ma double opt-in (zmienia komunikat)</label></div>
+    </fieldset>
+
+    <fieldset>
+      <legend>Konfiguracja (admin/IT)</legend>
+      <label for="f-slug">Slug funnela (identyfikator)</label>
+      <input type="text" id="f-slug" value="moj-lead-magnet" maxlength="60" pattern="[a-z0-9-]+" />
+      <label for="f-endpoint">Endpoint Workera (puste = tryb demo bez wysyłki)</label>
+      <input type="url" id="f-endpoint" value="" placeholder="https://lme-worker.twoja-subdomena.workers.dev/subscribe" />
+      <label for="f-account">Konto MailerLite (nazwa sekretu)</label>
+      <input type="text" id="f-account" value="" placeholder="np. akademia" maxlength="40" />
+      <label for="f-group">ID grupy MailerLite</label>
+      <input type="text" id="f-group" value="" placeholder="np. 123456789" maxlength="30" />
+      <p class="hint">Te dwa pola trafiają tylko do brief.json (dla IT do wpisu w KV) — nie na stronę.</p>
+    </fieldset>
+
+    <div id="panel-error"></div>
+    <div class="actions">
+      <button id="btn-brief" type="button">Pobierz brief.json</button>
+      <button id="btn-page" type="button">Pobierz stronę</button>
+    </div>
+  </div>
+  <div class="prev"><iframe id="preview" title="Podgląd landingu"></iframe></div>
+</div>
+
+<script>window.__LME_CSS__ = "/* base.css — wspoldzielone prymitywy (zrekonstruowane 1:1 z reference-structures/base-styles.md).\n   Warstwa NAD tokens.css. Sekcje REFERUJA te klasy/zmienne, nie inline'uja.\n   Kolory tylko przez var(--...). accent/radius/btn-height = semantyczne aliasy. */\n\n:root {\n  --accent: var(--brand);            /* token = kolor PRIMARY CTA (moze byc brand lub brand-2) */\n  --accent-contrast: var(--white);   /* czytelny tekst na akcencie */\n  --radius-sm: 8px;                  /* inputy / male chipy */\n  --radius-md: 16px;                 /* karty / kafle */\n  --radius-lg: 24px;                 /* duze kontenery / hero-karty */\n  --radius-pill: 999px;              /* przyciski / icon-button */\n  --btn-height: 52px;                /* JEDNA wysokosc przycisku na calej stronie */\n}\n\n*, *::before, *::after { box-sizing: border-box; }\n\n/* ---------- Buttons ---------- */\n.btn {\n  display: inline-flex; align-items: center; justify-content: center; gap: 8px;\n  box-sizing: border-box; min-height: var(--btn-height, 52px);\n  padding-block: 0; padding-inline: 28px;\n  border: 1px solid transparent;\n  border-radius: var(--radius-pill, var(--border-radius, 8px));\n  font: inherit; font-weight: 700; line-height: 1;\n  white-space: nowrap; text-decoration: none; cursor: pointer;\n  transition: background-color 200ms ease, color 200ms ease, border-color 200ms ease,\n              transform 200ms ease, box-shadow 200ms ease;\n}\n.btn:focus-visible { outline: 2px solid var(--brand); outline-offset: 2px; }\n.btn:disabled, .btn[aria-disabled=\"true\"] { opacity: .5; cursor: not-allowed; pointer-events: none; }\n\n.btn-primary { background-color: var(--accent, var(--brand)); color: var(--accent-contrast, var(--white)); }\n@media (hover: hover) {\n  .btn-primary:hover {\n    transform: translateY(-2px);\n    box-shadow: 0 8px 20px -6px color-mix(in srgb, var(--brand) 55%, transparent);\n    filter: brightness(.95);\n  }\n}\n.btn-primary:active { transform: translateY(0); box-shadow: none; }\n\n.btn-secondary { background-color: transparent; color: var(--brand); border-color: var(--brand); }\n@media (hover: hover) {\n  .btn-secondary:hover { background-color: var(--brand); color: var(--white); transform: translateY(-2px); }\n}\n.btn-secondary:active { transform: translateY(0); }\n\n.btn-ghost { background-color: transparent; color: var(--black1, currentColor); padding-inline: 8px; }\n.btn-ghost:hover { background-color: color-mix(in srgb, var(--brand) 10%, transparent); }\n\n.btn-icon {\n  width: 48px; height: 48px; padding: 0; border-radius: var(--radius-pill, 999px);\n  display: inline-flex; align-items: center; justify-content: center;\n  background-color: var(--accent, var(--brand)); color: var(--accent-contrast, var(--white));\n  border: none; cursor: pointer; transition: transform 200ms ease, background-color 200ms ease;\n}\n@media (hover: hover) { .btn-icon:hover { transform: scale(1.08); } }\n.btn-icon:active { transform: scale(.96); }\n.btn-icon:focus-visible { outline: 2px solid var(--brand); outline-offset: 2px; }\n\n/* ---------- Hover vocabulary ---------- */\n.hover-scale { transition: transform 200ms ease; }\n@media (hover: hover) { .hover-scale:hover { transform: scale(1.04); } }\n.hover-scale:active { transform: scale(.99); }\n\n.hover-lift { transition: transform 200ms cubic-bezier(.22,1,.36,1), box-shadow 200ms ease; }\n@media (hover: hover) { .hover-lift:hover { transform: translateY(-6px); box-shadow: 0 16px 32px -12px rgba(0,0,0,.22); } }\n.hover-lift:active { transform: translateY(-2px); }\n\n.hover-fill { transition: background-color 200ms ease, color 200ms ease; }\n@media (hover: hover) { .hover-fill:hover { background-color: var(--accent, var(--brand)); color: var(--accent-contrast, var(--white)); } }\n\n.with-arrow { display: inline-flex; align-items: center; gap: 8px; }\n.with-arrow .arrow { transition: transform 200ms ease; }\n@media (hover: hover) { .with-arrow:hover .arrow { transform: translateX(4px); } }\n\n.link-underline {\n  position: relative; text-decoration: none; color: inherit;\n  background-image: linear-gradient(var(--brand), var(--brand));\n  background-position: 0 100%; background-repeat: no-repeat; background-size: 0% 2px;\n  transition: background-size 220ms ease, color 200ms ease; padding-bottom: 2px;\n}\n@media (hover: hover) { .link-underline:hover { background-size: 100% 2px; color: var(--brand); } }\n.link-underline:focus-visible { background-size: 100% 2px; outline: none; }\n.link-underline[aria-current=\"page\"] { background-size: 100% 2px; color: var(--brand); }\n\n/* ---------- Content icons (mask, recolorable) ---------- */\n.svc-icon {\n  display: inline-block; width: 40px; height: 40px;\n  background-color: var(--accent, var(--brand));\n  -webkit-mask: var(--icon) center / contain no-repeat;\n          mask: var(--icon) center / contain no-repeat;\n  transition: background-color 200ms ease;\n}\n\n/* ---------- Cards ---------- */\n.card {\n  position: relative; z-index: 1; background: var(--white);\n  border-radius: var(--radius-md, var(--border-radius)); overflow: hidden;\n  transition: transform 200ms cubic-bezier(.22,1,.36,1), box-shadow 200ms ease;\n}\n@media (hover: hover) {\n  .card:hover { transform: translateY(-6px); box-shadow: 0 16px 32px -12px rgba(0,0,0,.22); }\n  .card:hover img { transform: scale(1.05); }\n  .card:hover .arrow { transform: translateX(4px); }\n}\n.card img { transition: transform 400ms ease; }\n.card a:focus-visible { outline: 2px solid var(--brand); outline-offset: 2px; }\n.card-body { padding: 24px var(--padding-horizontal, 24px); }\n\n/* ---------- Inputs ---------- */\n.field {\n  width: 100%; padding: 14px 16px;\n  border: 1px solid var(--light3, #ccc);\n  border-radius: var(--radius-sm, var(--border-radius, 8px));\n  background: var(--white); font: inherit;\n  transition: border-color 200ms ease, box-shadow 200ms ease;\n}\n.field::placeholder { color: var(--light3); }\n.field:hover { border-color: var(--brand); }\n.field:focus { outline: none; border-color: var(--brand); box-shadow: 0 0 0 3px color-mix(in srgb, var(--brand) 25%, transparent); }\n.field:user-invalid { border-color: #e5484d; }\n\n/* ---------- Missing-data placeholder ---------- */\n.data-placeholder { opacity: .55; font-style: italic; font-weight: inherit; }\n\n/* ---------- Reduced motion ---------- */\n@media (prefers-reduced-motion: reduce) {\n  *, *::before, *::after {\n    animation-duration: .01ms !important; animation-iteration-count: 1 !important;\n    transition-duration: .01ms !important;\n  }\n}\n\n/* landing.css — uklad landingu lead magnetu (LME). Prymitywy z base.css, kolory z tokens.\n   Adaptacja section.css z generatora Overflow: bez topbara/nav/proof, + widok \"dziekuje\". */\n\nhtml { overflow-x: hidden; }\nbody { margin: 0; font-family: var(--font-body); color: var(--black2); background: var(--white); line-height: 1.5; overflow-x: hidden; }\n.container { width: min(1080px, 100% - 40px); margin-inline: auto; }\nimg { max-width: 100%; }\n\n/* header-lite: samo logo, bez nawigacji (landing ma jeden cel) */\n.site-header { background: var(--white); border-bottom: 1px solid var(--light2); }\n.site-header .container { display: flex; align-items: center; min-height: 60px; }\n.brand-logo { height: 32px; width: auto; max-width: 190px; display: block; object-fit: contain; }\n\n/* hero */\n.hero { position: relative; background: linear-gradient(180deg, var(--light1), var(--white)); overflow: hidden; }\n.hero .container { position: relative; z-index: 1; display: grid; grid-template-columns: 1.08fr .92fr; gap: 40px; align-items: center; padding-block: 48px; }\n.hero-kicker { display: inline-block; color: var(--brand-ink, var(--brand)); background: color-mix(in srgb, var(--brand) 12%, var(--white)); padding: 4px 11px; border-radius: var(--radius-pill, 999px); font-weight: 700; letter-spacing: .04em; text-transform: uppercase; font-size: 12px; margin: 0 0 12px; }\n.hero h1 { font-family: var(--font-title); font-weight: 700; letter-spacing: -1.5px; line-height: 1.06; font-size: clamp(30px, 3.9vw, 46px); margin: 0 0 16px; color: var(--black3); overflow-wrap: break-word; }\n.hero-sub { font-size: 16px; line-height: 1.5; color: var(--black1); margin: -4px 0 18px; max-width: 56ch; }\n.hero-points { list-style: none; padding: 0; margin: 0 0 6px; display: flex; flex-direction: column; gap: 10px; }\n.hero-points li { display: inline-flex; align-items: center; gap: 9px; font-weight: 600; color: var(--black1); }\n.point-ic { width: 24px; height: 24px; flex: none; color: var(--brand-2); }\n\n/* karta formularza */\n.lead-card { box-shadow: 0 24px 56px -28px color-mix(in srgb, var(--brand) 40%, transparent); border: 1px solid var(--light2); }\n.lead-card .card-body { padding: 22px; }\n.lead-card h2 { font-family: var(--font-title); font-weight: 700; letter-spacing: -1px; margin: 0 0 4px; font-size: 24px; color: var(--black3); }\n.lead-card p.sub { margin: 0 0 14px; color: var(--black1); font-size: 13.5px; }\n.lead-card .field { margin-bottom: 10px; padding: 12px 14px; }\n.rodo { display: flex; gap: 8px; font-size: 11.5px; color: var(--black1); margin: 2px 0 14px; align-items: flex-start; line-height: 1.4; }\n.rodo input { margin-top: 2px; }\n.rodo a { color: var(--brand-ink, var(--brand)); }\n.lead-card .btn { width: 100%; }\n.form-error { display: none; margin: 0 0 10px; padding: 10px 12px; border-radius: var(--radius-sm, 8px); background: #FDECEC; color: #B3261E; font-size: 13px; }\n.form-error.show { display: block; }\n\n/* honeypot: pole niewidoczne dla ludzi (boty je wypelniaja) */\n.hp-field { position: absolute; left: -5000px; top: -5000px; opacity: 0; height: 0; overflow: hidden; }\n\n/* widok \"dziekuje\" (podmieniany JS-em po zapisie) */\n.thanks { display: none; text-align: center; padding: 28px 8px; }\n.thanks.show { display: block; }\n.thanks h2 { font-family: var(--font-title); font-weight: 700; letter-spacing: -1px; margin: 0 0 8px; font-size: 26px; color: var(--black3); }\n.thanks p { margin: 0 0 18px; color: var(--black1); }\n.thanks .btn { width: auto; }\n.thanks-ic { width: 52px; height: 52px; color: var(--brand-2); margin: 0 auto 10px; display: block; }\n\n/* miekkie plamy brandowe w tle */\n.drop  { position: absolute; right: -80px; top: -90px; width: 320px; height: 320px; border-radius: 50%; background: radial-gradient(circle at 32% 32%, color-mix(in srgb, var(--brand) 18%, transparent), transparent 70%); pointer-events: none; z-index: 0; }\n.drop2 { position: absolute; left: -60px; bottom: -110px; width: 260px; height: 260px; border-radius: 50%; background: radial-gradient(circle at 50% 50%, color-mix(in srgb, var(--brand-2) 16%, transparent), transparent 70%); pointer-events: none; z-index: 0; }\n\n/* stopka minimalna */\n.site-footer { border-top: 1px solid var(--light2); }\n.site-footer .container { min-height: 52px; display: flex; align-items: center; justify-content: space-between; gap: 12px; font-size: 12.5px; color: var(--black1); flex-wrap: wrap; }\n.site-footer a { color: var(--black1); }\n\n@media (max-width: 900px) {\n  .hero .container { grid-template-columns: 1fr; gap: 28px; padding-block: 36px; }\n}\n";</script>
+<script>
+// colors.js — deterministyczny ekstraktor kolorow z SVG + helpery WCAG/HSV (zero-dep).
+// UMD: dziala w Node (require) i w przegladarce (window.OG.colors).
+(function (root) {
+  "use strict";
+
+  const NAMED = { white: "#FFFFFF", black: "#000000" };
+
+  function norm(hex) {
+    if (!hex) return null;
+    hex = String(hex).trim().toLowerCase();
+    if (NAMED[hex]) hex = NAMED[hex];
+    if (hex[0] !== "#") return null;
+    let h = hex.slice(1);
+    if (h.length === 3) h = h.split("").map((c) => c + c).join("");
+    if (h.length !== 6 || /[^0-9a-f]/.test(h)) return null;
+    return "#" + h.toUpperCase();
+  }
+
+  function rgb(hex) {
+    const h = hex.slice(1);
+    return { r: parseInt(h.slice(0, 2), 16), g: parseInt(h.slice(2, 4), 16), b: parseInt(h.slice(4, 6), 16) };
+  }
+
+  function hsv(hex) {
+    const { r, g, b } = rgb(hex);
+    const R = r / 255, G = g / 255, B = b / 255;
+    const mx = Math.max(R, G, B), mn = Math.min(R, G, B), d = mx - mn;
+    let hh = 0;
+    if (d) {
+      if (mx === R) hh = ((G - B) / d) % 6;
+      else if (mx === G) hh = (B - R) / d + 2;
+      else hh = (R - G) / d + 4;
+      hh *= 60; if (hh < 0) hh += 360;
+    }
+    return { h: hh, s: mx ? d / mx : 0, v: mx };
+  }
+
+  function _lin(c) { c /= 255; return c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4); }
+  function lum(hex) { const { r, g, b } = rgb(hex); return 0.2126 * _lin(r) + 0.7152 * _lin(g) + 0.0722 * _lin(b); }
+  function contrast(a, b) { const L1 = lum(a), L2 = lum(b); const hi = Math.max(L1, L2), lo = Math.min(L1, L2); return (hi + 0.05) / (lo + 0.05); }
+
+  function isNeutral(hex) { const { s, v } = hsv(hex); return s < 0.18 || v < 0.16 || (v > 0.93 && s < 0.1); }
+  function dist(a, b) { const x = rgb(a), y = rgb(b); return Math.abs(x.r - y.r) + Math.abs(x.g - y.g) + Math.abs(x.b - y.b); }
+
+  function ctaScore(hex) {
+    const { h, s } = hsv(hex);
+    let base;
+    if (h >= 70 && h <= 170) base = 3;
+    else if (h <= 45 || h >= 330) base = 3;
+    else if (h > 45 && h < 70) base = 2.5;
+    else if (h >= 180 && h <= 275) base = 1;
+    else base = 2;
+    return base + s * 0.5;
+  }
+
+  function extractColors(svg) {
+    const found = {};
+    let m;
+    const reHex = /#[0-9a-fA-F]{3,6}\b/g;
+    while ((m = reHex.exec(svg))) { const n = norm(m[0]); if (n) found[n] = (found[n] || 0) + 1; }
+    const reNamed = /(?:fill|stop-color|stroke)\s*[:=]\s*["']?\s*(white|black)\b/gi;
+    while ((m = reNamed.exec(svg))) { const n = norm(m[1]); if (n) found[n] = (found[n] || 0) + 1; }
+
+    const all = Object.entries(found).map(([hex, count]) => ({ hex, count })).sort((a, b) => b.count - a.count);
+    const chromatic = [];
+    for (const c of all) {
+      if (isNeutral(c.hex)) continue;
+      if (chromatic.some((k) => dist(k.hex, c.hex) < 28)) continue;
+      chromatic.push(c);
+    }
+    return { chromatic, all };
+  }
+
+  const api = { norm, rgb, hsv, lum, contrast, isNeutral, dist, ctaScore, extractColors };
+  if (typeof module === "object" && module.exports) module.exports = api;
+  else { root.OG = root.OG || {}; root.OG.colors = api; }
+})(typeof self !== "undefined" ? self : this);
+
+;
+// deriveTokens.js — z kolorow logo -> tokeny (dwufazowy: brand=UI, accent=CTA). Zero API.
+// UMD: Node (require) + przegladarka (window.OG.deriveTokens).
+(function (root) {
+  "use strict";
+  const colors = (typeof require === "function") ? require("./colors") : (root.OG && root.OG.colors);
+  const { rgb, lum, contrast, ctaScore, extractColors, isNeutral } = colors;
+
+  const WHITE = "#FFFFFF";
+  const BLACK3 = "#0F1011";
+  const FALLBACK = "#1B4D8C";
+
+  function toHex(r, g, b) {
+    return "#" + [r, g, b].map((x) => Math.max(0, Math.min(255, Math.round(x))).toString(16).padStart(2, "0")).join("").toUpperCase();
+  }
+  function mix(hex, t, amt) { const c = rgb(hex); return toHex(c.r + (t.r - c.r) * amt, c.g + (t.g - c.g) * amt, c.b + (t.b - c.b) * amt); }
+  function tone(hex, amt) { return lum(hex) > 0.4 ? mix(hex, { r: 0, g: 0, b: 0 }, amt) : mix(hex, { r: 255, g: 255, b: 255 }, amt); }
+  function onColor(bg) { return contrast(BLACK3, bg) >= contrast(WHITE, bg) ? "var(--black3)" : "var(--white)"; }
+
+  function analyze(svg) {
+    const { chromatic } = extractColors(svg);
+    let brand, accent, mono = false, note;
+    if (chromatic.length === 0) {
+      brand = FALLBACK; accent = tone(FALLBACK, 0.2);
+      note = "brak kolorow chromatycznych -> fallback";
+    } else if (chromatic.length === 1) {
+      brand = chromatic[0].hex; accent = tone(brand, 0.22); mono = true;
+      note = `mono (1 kolor ${brand}) -> accent = drugi ton ${accent}`;
+    } else {
+      const [a, b] = chromatic.slice(0, 2);
+      if (ctaScore(a.hex) >= ctaScore(b.hex)) { accent = a.hex; brand = b.hex; }
+      else { accent = b.hex; brand = a.hex; }
+      note = `2 kolory -> brand(UI)=${brand}, accent(CTA)=${accent}`;
+    }
+    const brand2 = chromatic.length >= 2 ? (brand === chromatic[0].hex ? chromatic[1].hex : chromatic[0].hex) : accent;
+    return { brand, accent, brand2, mono, note, chromatic };
+  }
+
+  function readableOnWhite(hex) {
+    let amt = 0, c = hex;
+    while (contrast(c, WHITE) < 4.5 && amt < 0.9) { amt += 0.08; c = mix(hex, { r: 0, g: 0, b: 0 }, amt); }
+    return c;
+  }
+
+  // paleta "do 4" (parytet Figmy: 4 kolory, min 1 wyrozniajacy): accent, brand, brand2,
+  // + 4-ty = kolejny chromatyczny z logo albo JEDEN neutralny ink. Dedupe po hex, max 4.
+  function paletteColors(t) {
+    const out = [];
+    const push = (hex, role) => {
+      if (!hex || out.length >= 4 || out.some((c) => c.hex === hex)) return;
+      out.push({ hex, role, chromatic: !isNeutral(hex) });
+    };
+    push(t.accent, "accent");
+    push(t.brand, "brand");
+    push(t.brand2, "brand2");
+    (t.chromatic || []).forEach((c) => push(c.hex, "brand3"));
+    const ink = readableOnWhite(t.brand);
+    push(out.some((c) => c.hex === ink) ? BLACK3 : ink, "neutral");
+    return out;
+  }
+
+  function finalize(t) {
+    return {
+      brand: t.brand, accent: t.accent, brand2: t.brand2 || t.accent,
+      colors: paletteColors(t),
+      brandInk: readableOnWhite(t.brand),
+      onAccent: onColor(t.accent), onBrand: onColor(t.brand),
+    };
+  }
+
+  function tokensCss(t, company, label) {
+    return `/* tokens — ${company}${label ? " / " + label : ""} (logo->Brand DETERMINISTYCZNY z SVG, bez API).
+   brand=UI, accent=CTA (dwufazowo); on-* auto WCAG; neutrale/spacing/typografia stale. */
+:root {
+  --brand: ${t.brand};
+  --brand-ink: ${t.brandInk};
+  --brand-2: ${t.brand2};
+  --accent: ${t.accent};
+  --accent-contrast: ${t.onAccent};
+  --on-brand: ${t.onBrand};
+  --white: #FFFFFF;
+  --light1: #F4F6F6; --light2: #E8ECEE; --light3: #D5DCDF;
+  --black1: #45494D;  --black2: #292B2D;  --black3: #0F1011;
+  --padding-horizontal: 24px; --padding-vertical: 24px;
+  --section-padding: 100px; --section-gap: 48px; --cards-gap: 20px;
+  --border-radius: 0px;
+  --font-title: "Inter", "Geist", system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+  --font-body:  "Inter", system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+}`;
+  }
+
+  const api = { analyze, finalize, tokensCss, tone };
+  if (typeof module === "object" && module.exports) module.exports = api;
+  else { root.OG = root.OG || {}; root.OG.deriveTokens = api; }
+})(typeof self !== "undefined" ? self : this);
+
+;
+// renderLanding.js — landing lead magnetu z briefu (slot-fill). UMD: Node + przegladarka.
+// render(brief, logoSrc, tokens, opts):
+//   opts.inlineCss (string) -> wklej base+landing CSS inline (samowystarczalny plik, dziala z file:///srcdoc);
+//   tokens -> obiekt z deriveTokens.finalize() (brand/accent/on-* z logo).
+(function (root) {
+  "use strict";
+  const dt = (typeof require === "function") ? require("./deriveTokens") : (root.OG && root.OG.deriveTokens);
+  const { tokensCss } = dt;
+
+  function esc(s) {
+    return String(s == null ? "" : s)
+      .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+  }
+
+  const ICON = {
+    check: '<svg class="point-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="9"/></svg>',
+    party: '<svg class="thanks-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="9"/></svg>',
+  };
+
+  function render(brief, logoSrc, tokens, opts) {
+    opts = opts || {};
+    const brand = brief.brand || {};
+    const form = brief.form || {};
+    const thanks = brief.thankyou || {};
+    const delivery = brief.delivery || {};
+    const bullets = (brief.bullets || []).map((b) => `<li>${ICON.check} ${esc(b)}</li>`).join("\n          ");
+
+    const rodoText = brief.rodoText || "Wyrażam zgodę na przetwarzanie moich danych w celu otrzymania materiału i informacji od nadawcy.";
+    const rodoHtml = brief.privacyUrl
+      ? `${esc(rodoText)} <a href="${esc(brief.privacyUrl)}" target="_blank" rel="noopener">Polityka prywatności</a>.`
+      : esc(rodoText);
+
+    const downloadBtn = delivery.mode === "download" && delivery.file
+      ? `<a class="btn btn-primary with-arrow" id="lm-download" href="${esc(delivery.file)}" download>${esc(thanks.buttonLabel || "Pobierz materiał")} <span class="arrow">→</span></a>`
+      : "";
+
+    const thanksBody = brief.doubleOptin
+      ? esc(thanks.doubleOptinBody || "Sprawdź skrzynkę i potwierdź zapis — a materiał czeka na Ciebie poniżej.")
+      : esc(thanks.body || "Materiał jest gotowy do pobrania poniżej.");
+
+    const tokenStyle = tokens ? `<style>${tokensCss(tokens, brand.name || "", "")}</style>` : "";
+    const cssHead = opts.inlineCss
+      ? `<style>${opts.inlineCss}</style>${tokenStyle}`
+      : `<link rel="stylesheet" href="base.css" />
+  <link rel="stylesheet" href="landing.css" />${tokenStyle ? "\n  " + tokenStyle : ""}`;
+
+    const cfg = {
+      endpoint: brief.endpoint || "",
+      funnel: brief.slug || "",
+    };
+
+    return `<!doctype html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>${esc(brief.h1 || brand.name || "Lead magnet")}</title>
+  <meta name="description" content="${esc(brief.sub || brief.h1 || "")}" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
+  ${cssHead}
+</head>
+<body>
+  <header class="site-header">
+    <div class="container">
+      <img class="brand-logo" src="${esc(logoSrc)}" alt="${esc(brand.name || "logo")}" />
+    </div>
+  </header>
+
+  <section class="hero">
+    <span class="drop" aria-hidden="true"></span>
+    <span class="drop2" aria-hidden="true"></span>
+    <div class="container">
+      <div class="hero-copy">
+        ${brief.kicker ? `<p class="hero-kicker">${esc(brief.kicker)}</p>` : ""}
+        <h1>${esc(brief.h1 || "")}</h1>
+        ${brief.sub ? `<p class="hero-sub">${esc(brief.sub)}</p>` : ""}
+        <ul class="hero-points">
+          ${bullets}
+        </ul>
+      </div>
+
+      <div class="card lead-card">
+        <div class="card-body">
+          <form id="lm-form" novalidate>
+            <h2>${esc(form.title || "Odbierz za darmo")}</h2>
+            <p class="sub">${esc(form.sub || "Wpisz dane, a materiał wyląduje u Ciebie od razu.")}</p>
+            <div class="form-error" id="lm-error" role="alert"></div>
+            <input class="field" type="text" name="name" placeholder="${esc(form.nameLabel || "Imię")}" autocomplete="given-name" />
+            <input class="field" type="email" name="email" placeholder="${esc(form.emailLabel || "E-mail")}" autocomplete="email" required />
+            <div class="hp-field" aria-hidden="true"><input type="text" name="website" tabindex="-1" autocomplete="off" /></div>
+            <label class="rodo"><input type="checkbox" name="rodo" /><span>${rodoHtml}</span></label>
+            <button class="btn btn-primary with-arrow" type="submit">${esc(form.submit || "Wysyłam")} <span class="arrow">→</span></button>
+          </form>
+          <div class="thanks" id="lm-thanks">
+            ${ICON.party}
+            <h2>${esc(thanks.title || "Gotowe!")}</h2>
+            <p>${thanksBody}</p>
+            ${downloadBtn}
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="site-footer">
+    <div class="container">
+      <span>© ${esc(brand.name || "")}</span>
+      ${brief.privacyUrl ? `<a href="${esc(brief.privacyUrl)}" target="_blank" rel="noopener">Polityka prywatności</a>` : ""}
+    </div>
+  </footer>
+
+  <script>
+  (function () {
+    var CFG = ${JSON.stringify(cfg)};
+    var form = document.getElementById("lm-form");
+    var thanksEl = document.getElementById("lm-thanks");
+    var errEl = document.getElementById("lm-error");
+    if (!form) return;
+
+    function showError(msg) { errEl.textContent = msg; errEl.classList.add("show"); }
+    function clearError() { errEl.textContent = ""; errEl.classList.remove("show"); }
+
+    form.addEventListener("submit", function (e) {
+      e.preventDefault();
+      clearError();
+      var name = form.elements.name.value.trim();
+      var email = form.elements.email.value.trim();
+      var hp = form.elements.website.value;
+      var rodo = form.elements.rodo.checked;
+      if (!/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(email)) { showError("Podaj poprawny adres e-mail."); return; }
+      if (!rodo) { showError("Zaznacz zgodę na przetwarzanie danych."); return; }
+      if (!CFG.endpoint) { form.style.display = "none"; thanksEl.classList.add("show"); return; }
+
+      var btn = form.querySelector("button[type=submit]");
+      btn.disabled = true;
+      var prev = btn.innerHTML;
+      btn.textContent = "Wysyłam…";
+
+      fetch(CFG.endpoint, {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ funnel: CFG.funnel, name: name, email: email, website: hp }),
+      }).then(function (res) { return res.json().catch(function () { return {}; }).then(function (d) { return { ok: res.ok && d.ok, data: d }; }); })
+        .then(function (r) {
+          if (r.ok) { form.style.display = "none"; thanksEl.classList.add("show"); }
+          else { showError((r.data && r.data.error) || "Coś poszło nie tak — spróbuj za chwilę."); btn.disabled = false; btn.innerHTML = prev; }
+        })
+        .catch(function () { showError("Brak połączenia — spróbuj za chwilę."); btn.disabled = false; btn.innerHTML = prev; });
+    });
+  })();
+  <\/script>
+</body>
+</html>
+`;
+  }
+
+  const api = { render };
+  if (typeof module === "object" && module.exports) module.exports = api;
+  else { root.OG = root.OG || {}; root.OG.renderLanding = api; }
+})(typeof self !== "undefined" ? self : this);
+
+</script>
+<script>
+
+(function () {
+  "use strict";
+  var CSS = window.__LME_CSS__;
+  var state = { logoSvg: null, logoName: null };
+
+  function $(id) { return document.getElementById(id); }
+  function val(id) { return $(id).value.trim(); }
+
+  function collectBrief() {
+    return {
+      slug: val("f-slug") || "moj-lead-magnet",
+      brand: { name: val("f-brand"), logo: state.logoName || "logo.svg" },
+      kicker: val("f-kicker"),
+      h1: val("f-h1"),
+      sub: val("f-sub"),
+      bullets: [val("f-b1"), val("f-b2"), val("f-b3")].filter(Boolean),
+      form: { title: val("f-ftitle"), sub: val("f-fsub"), submit: val("f-fsubmit") },
+      thankyou: { title: val("f-ttitle"), body: val("f-tbody"), buttonLabel: val("f-tbtn") },
+      rodoText: val("f-rodo"),
+      privacyUrl: val("f-privacy"),
+      delivery: { mode: "download", file: val("f-file") },
+      doubleOptin: $("f-doi").checked,
+      endpoint: val("f-endpoint"),
+      ml: { account: val("f-account"), groupId: val("f-group") }
+    };
+  }
+
+  var PLACEHOLDER_SVG = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 32"><rect width="32" height="32" rx="6" fill="#1B4D8C"/><text x="42" y="22" font-family="Arial" font-size="16" font-weight="bold" fill="#0F1011">LOGO</text></svg>';
+
+  function currentHtml() {
+    var svg = state.logoSvg || PLACEHOLDER_SVG;
+    var tokens = OG.deriveTokens.finalize(OG.deriveTokens.analyze(svg));
+    var logoData = "data:image/svg+xml;base64," + btoa(unescape(encodeURIComponent(svg)));
+    return OG.renderLanding.render(collectBrief(), logoData, tokens, { inlineCss: CSS });
+  }
+
+  var t = null;
+  function update() {
+    clearTimeout(t);
+    t = setTimeout(function () {
+      try {
+        $("preview").srcdoc = currentHtml();
+        $("panel-error").textContent = "";
+      } catch (err) {
+        $("panel-error").textContent = "Blad podgladu: " + err.message;
+      }
+    }, 150);
+  }
+
+  function download(name, content, type) {
+    var blob = new Blob([content], { type: type });
+    var a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = name;
+    a.click();
+    setTimeout(function () { URL.revokeObjectURL(a.href); }, 2000);
+  }
+
+  $("f-logo").addEventListener("change", function (e) {
+    var file = e.target.files && e.target.files[0];
+    if (!file) return;
+    if (!/svg/i.test(file.type) && !/\.svg$/i.test(file.name)) {
+      $("panel-error").textContent = "Logo musi byc plikiem SVG.";
+      return;
+    }
+    var reader = new FileReader();
+    reader.onload = function () {
+      state.logoSvg = String(reader.result);
+      state.logoName = file.name;
+      update();
+    };
+    reader.readAsText(file);
+  });
+
+  document.querySelectorAll("input[type=text], input[type=url], textarea, input[type=checkbox]").forEach(function (el) {
+    el.addEventListener("input", update);
+    el.addEventListener("change", update);
+  });
+
+  $("btn-brief").addEventListener("click", function () {
+    var brief = collectBrief();
+    download(brief.slug + ".json", JSON.stringify(brief, null, 2), "application/json");
+  });
+
+  $("btn-page").addEventListener("click", function () {
+    var brief = collectBrief();
+    download("index.html", currentHtml(), "text/html");
+  });
+
+  update();
+})();
+
+</script>
+</body>
+</html>

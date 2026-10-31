@@ -1,0 +1,11 @@
+# wrangler.toml — konfiguracja Workera LME.
+# Deploy: patrz README ("Deploy Workera").
+name = "lme-worker"
+main = "worker.mjs"
+compatibility_date = "2026-07-01"
+
+# KV z konfiguracja funneli (slug -> {"account":"...","groupId":"..."}).
+# Utworz: npx wrangler kv namespace create FUNNELS   i wklej wygenerowane id ponizej.
+[[kv_namespaces]]
+binding = "FUNNELS"
+id = "REPLACE_ME_KV_ID"

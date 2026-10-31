@@ -1,0 +1,59 @@
+/* landing.css — uklad landingu lead magnetu (LME). Prymitywy z base.css, kolory z tokens.
+   Adaptacja section.css z generatora Overflow: bez topbara/nav/proof, + widok "dziekuje". */
+
+html { overflow-x: hidden; }
+body { margin: 0; font-family: var(--font-body); color: var(--black2); background: var(--white); line-height: 1.5; overflow-x: hidden; }
+.container { width: min(1080px, 100% - 40px); margin-inline: auto; }
+img { max-width: 100%; }
+
+/* header-lite: samo logo, bez nawigacji (landing ma jeden cel) */
+.site-header { background: var(--white); border-bottom: 1px solid var(--light2); }
+.site-header .container { display: flex; align-items: center; min-height: 60px; }
+.brand-logo { height: 32px; width: auto; max-width: 190px; display: block; object-fit: contain; }
+
+/* hero */
+.hero { position: relative; background: linear-gradient(180deg, var(--light1), var(--white)); overflow: hidden; }
+.hero .container { position: relative; z-index: 1; display: grid; grid-template-columns: 1.08fr .92fr; gap: 40px; align-items: center; padding-block: 48px; }
+.hero-kicker { display: inline-block; color: var(--brand-ink, var(--brand)); background: color-mix(in srgb, var(--brand) 12%, var(--white)); padding: 4px 11px; border-radius: var(--radius-pill, 999px); font-weight: 700; letter-spacing: .04em; text-transform: uppercase; font-size: 12px; margin: 0 0 12px; }
+.hero h1 { font-family: var(--font-title); font-weight: 700; letter-spacing: -1.5px; line-height: 1.06; font-size: clamp(30px, 3.9vw, 46px); margin: 0 0 16px; color: var(--black3); overflow-wrap: break-word; }
+.hero-sub { font-size: 16px; line-height: 1.5; color: var(--black1); margin: -4px 0 18px; max-width: 56ch; }
+.hero-points { list-style: none; padding: 0; margin: 0 0 6px; display: flex; flex-direction: column; gap: 10px; }
+.hero-points li { display: inline-flex; align-items: center; gap: 9px; font-weight: 600; color: var(--black1); }
+.point-ic { width: 24px; height: 24px; flex: none; color: var(--brand-2); }
+
+/* karta formularza */
+.lead-card { box-shadow: 0 24px 56px -28px color-mix(in srgb, var(--brand) 40%, transparent); border: 1px solid var(--light2); }
+.lead-card .card-body { padding: 22px; }
+.lead-card h2 { font-family: var(--font-title); font-weight: 700; letter-spacing: -1px; margin: 0 0 4px; font-size: 24px; color: var(--black3); }
+.lead-card p.sub { margin: 0 0 14px; color: var(--black1); font-size: 13.5px; }
+.lead-card .field { margin-bottom: 10px; padding: 12px 14px; }
+.rodo { display: flex; gap: 8px; font-size: 11.5px; color: var(--black1); margin: 2px 0 14px; align-items: flex-start; line-height: 1.4; }
+.rodo input { margin-top: 2px; }
+.rodo a { color: var(--brand-ink, var(--brand)); }
+.lead-card .btn { width: 100%; }
+.form-error { display: none; margin: 0 0 10px; padding: 10px 12px; border-radius: var(--radius-sm, 8px); background: #FDECEC; color: #B3261E; font-size: 13px; }
+.form-error.show { display: block; }
+
+/* honeypot: pole niewidoczne dla ludzi (boty je wypelniaja) */
+.hp-field { position: absolute; left: -5000px; top: -5000px; opacity: 0; height: 0; overflow: hidden; }
+
+/* widok "dziekuje" (podmieniany JS-em po zapisie) */
+.thanks { display: none; text-align: center; padding: 28px 8px; }
+.thanks.show { display: block; }
+.thanks h2 { font-family: var(--font-title); font-weight: 700; letter-spacing: -1px; margin: 0 0 8px; font-size: 26px; color: var(--black3); }
+.thanks p { margin: 0 0 18px; color: var(--black1); }
+.thanks .btn { width: auto; }
+.thanks-ic { width: 52px; height: 52px; color: var(--brand-2); margin: 0 auto 10px; display: block; }
+
+/* miekkie plamy brandowe w tle */
+.drop  { position: absolute; right: -80px; top: -90px; width: 320px; height: 320px; border-radius: 50%; background: radial-gradient(circle at 32% 32%, color-mix(in srgb, var(--brand) 18%, transparent), transparent 70%); pointer-events: none; z-index: 0; }
+.drop2 { position: absolute; left: -60px; bottom: -110px; width: 260px; height: 260px; border-radius: 50%; background: radial-gradient(circle at 50% 50%, color-mix(in srgb, var(--brand-2) 16%, transparent), transparent 70%); pointer-events: none; z-index: 0; }
+
+/* stopka minimalna */
+.site-footer { border-top: 1px solid var(--light2); }
+.site-footer .container { min-height: 52px; display: flex; align-items: center; justify-content: space-between; gap: 12px; font-size: 12.5px; color: var(--black1); flex-wrap: wrap; }
+.site-footer a { color: var(--black1); }
+
+@media (max-width: 900px) {
+  .hero .container { grid-template-columns: 1fr; gap: 28px; padding-block: 36px; }
+}

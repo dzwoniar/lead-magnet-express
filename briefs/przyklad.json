@@ -1,0 +1,37 @@
+{
+  "slug": "checklista-przyklad",
+  "brand": {
+    "name": "Przykladowa Marka",
+    "logo": "assets/logo-przyklad.svg"
+  },
+  "kicker": "Darmowa checklista",
+  "h1": "Odbierz checklistę, która oszczędza godziny pracy co tydzień",
+  "sub": "Konkretna, sprawdzona w praktyce lista kroków — bez teorii i lania wody.",
+  "bullets": [
+    "Opis syntetycznego przykładu",
+    "Brak danych klientów",
+    "Materiał do lokalnej demonstracji"
+  ],
+  "form": {
+    "title": "Odbierz za darmo",
+    "sub": "Wpisz dane, a materiał wyląduje u Ciebie od razu.",
+    "submit": "Wysyłam"
+  },
+  "thankyou": {
+    "title": "Gotowe!",
+    "body": "Materiał jest gotowy do pobrania poniżej.",
+    "buttonLabel": "Pobierz przykład"
+  },
+  "rodoText": "Wyrażam zgodę na przetwarzanie moich danych w celu otrzymania materiału i informacji od nadawcy.",
+  "privacyUrl": "",
+  "delivery": {
+    "mode": "download",
+    "file": "lead-magnet.txt"
+  },
+  "doubleOptin": false,
+  "endpoint": "",
+  "ml": {
+    "account": "przyklad",
+    "groupId": ""
+  }
+}

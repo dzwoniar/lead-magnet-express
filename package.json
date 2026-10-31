@@ -1,0 +1,15 @@
+{
+  "name": "lead-magnet-express",
+  "version": "0.1.0",
+  "private": true,
+  "description": "LME: brief + logo SVG -> landing lead magnetu z formularzem do MailerLite. Zero zaleznosci.",
+  "scripts": {
+    "build": "node src/buildFunnel.mjs briefs/przyklad.json",
+    "panel": "node src/buildPanel.mjs",
+    "test": "node test/smoke-worker.mjs && node --test test/security.test.cjs",
+    "check": "node --check src/buildFunnel.mjs && node --check src/buildPanel.mjs && node --check src/lib/colors.js && node --check src/lib/deriveTokens.js && node --check src/lib/renderLanding.js && node --check worker/worker.mjs && node --check test/smoke-worker.mjs"
+  },
+  "engines": {
+    "node": ">=22"
+  }
+}
