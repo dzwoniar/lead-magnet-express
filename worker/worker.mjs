@@ -36,6 +36,9 @@ async function handleSubscribe(request, env) {
   } catch {
     return json({ ok: false, error: "Niepoprawne dane." }, 400);
   }
+  if (!body || typeof body !== "object" || Array.isArray(body)) {
+    return json({ ok: false, error: "Niepoprawne dane." }, 400);
+  }
 
   // Honeypot (EC-08): udawany sukces.
   if (body.website) return json({ ok: true });

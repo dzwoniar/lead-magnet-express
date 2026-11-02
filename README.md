@@ -25,7 +25,7 @@ Otwórz `output/checklista-przyklad/index.html` lub `panel/intake.html`. CLI: `n
 | [src/lib/renderLanding.js](src/lib/renderLanding.js) | HTML, walidacja formularza i widok podziękowania |
 | [worker/worker.mjs](worker/worker.mjs) | Walidacja, honeypot, serwerowa kontrola zgody i MailerLite |
 | [test/smoke-worker.mjs](test/smoke-worker.mjs) | Test integracji z atrapami fetch i KV, bez wysyłki |
-| [test/security.test.cjs](test/security.test.cjs) | Brak zgody oraz próby wyjścia poza ścieżkę outputu |
+| [test/security.test.cjs](test/security.test.cjs) | Brak zgody, niepoprawny typ JSON i próby wyjścia poza ścieżkę outputu |
 
 Przeglądarka przekazuje `funnel`, dane formularza i zgodę do Workera. Worker odczytuje konfigurację z KV `FUNNELS`; klucz API pobiera z sekretu `ML_KEY_<ACCOUNT>`. Klucz nigdy nie jest częścią HTML. Formularz bez endpointu tylko przełącza widok.
 
